@@ -85,6 +85,24 @@ summary(fit3, standardized = TRUE, fit.measures = TRUE)
 residuals(fit3, type = "standardized.mplus")
 residuals(fit3, type = "cor.bollen")
 
+### Al haber fijado una intersección al mismo valor para los dos grupos, ahora la estructura de medias ya no está perfectamente identificada. Es decir, teníamos 5 variables medidas en cada grupo, lo cual sumaba un total de 10 medias. Ahora tenemos 9, ya que una de ellas la hemos fijado entre grupos.
+tabla_medias <- function(fit, vars = c("achieve", "delinq")) {
+  obs <- lavInspect(fit, "sampstat")                    # medias observadas
+  imp <- lavInspect(fit, "implied")                     # medias predichas
+  raw <- residuals(fit, type = "raw")                   # residuo bruto
+  std <- residuals(fit, type = "standardized.mplus")    # residuo estandarizado
+  do.call(rbind, lapply(names(obs), function(g) data.frame(
+    grupo       = g,
+    variable    = vars,
+    observada   = round(obs[[g]]$mean[vars], 3),
+    predicha    = round(imp[[g]]$mean[vars], 3),
+    residuo     = round(raw[[g]]$mean[vars], 3),
+    residuo_std = round(std[[g]]$mean[vars], 3),
+    row.names   = NULL
+  )))
+}
+
+tabla_medias(fit3)
 
 
 # MODELO 4 ----
@@ -117,9 +135,16 @@ fitMeasures(fit3, ind.ajuste)
 fitMeasures(fit4, ind.ajuste)
 
 # Con la función anova, comparamos los modelos a nivel de chi-cuadrado y RMSEA. El valor p nos indica si el ajuste del modelo es significativamente distinto entre un modelo y otro.
+
+# Liberar achieve -> delinq mejora el ajuste de orma significativa. Es decir, el efecto protector del logro escolar sobre la delincuencia es distinto en los dos grupos.
 anova(fit1, fit2)
+
+# Igualar el intercepto de achieve no empeora el ajuste. Es decir, una vez controlados SES, effort y VIQ, los dos grupos no difieren en el nivel medio de logro escolar. Aceptamos la restricción porque da un modelo más parsimonioso
 anova(fit2, fit3)
+
+# Igualar el intercepto de delinq empeora el ajuste. Es decir, los grupos sí difieren en el nivel de delincuencia ajustado por los predictores, así que rechazaríamos la restricción.
 anova(fit3, fit4)
+
 
 
 
