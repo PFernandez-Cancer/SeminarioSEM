@@ -76,6 +76,11 @@ residuals(medical.fit, type = "cor.bollen")
 AIC(psychosomatic.fit, medical.fit)
 BIC(psychosomatic.fit, medical.fit)
 
+# Si queremos un contraste formal, el paquete nonnest2 aplica la prueba de Vuong para modelos no anidados y da intervalos de confianza para la diferencia en AIC y BIC
+library(nonnest2)
+vuongtest(psychosomatic.fit, medical.fit)
+icci(psychosomatic.fit, medical.fit)
 
+# Importante: preferir un modelo a otro por AIC o BIC no prueba que su estructural causal sea la correcta, porque puede haber modelos equivalentes que ajustan igual de bien.
 
 
