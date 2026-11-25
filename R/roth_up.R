@@ -92,4 +92,8 @@ summary(fit2, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE)
 # Utilizamos la funcion anova para comparar los dos modelos
 anova(fit1, fit2)
 
-
+# Podemos comparar otros índices de ajuste
+ind.ajuste <- c("chisq", "df", "pvalue", 
+                "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "srmr", "cfi", "tli")
+fitMeasures(fit1, ind.ajuste)
+fitMeasures(fit2, ind.ajuste)
