@@ -119,6 +119,17 @@ summary(fit.sem, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE)
 lavaan::residuals(fit.sem, type = "standardized.mplus")
 lavaan::residuals(fit.sem, type = "cor.bollen")
 
+# Evaluamos el desajuste mediante la diferencia de chi-cuadrado entre el modelo CFA (solo modelo de medida) y el modelo que incluye modelo estructural y de medida
+lavTestLRT(fit.cfa, fit.sem)
+
+# También podemos evaluar el ajuste solo de la parte estructural usando el RMSEA-P de McDonald y Ho (2002)
+lrt   <- lavTestLRT(fit.cfa, fit.sem)
+dchi  <- lrt$`Chisq diff`[2]
+ddf   <- lrt$`Df diff`[2]
+N     <- lavInspect(fit.sem, "ntotal")
+rmsea_p <- sqrt(max(dchi - ddf, 0) / (ddf * (N - 1)))
+rmsea_p
+
 
 ###############################
 # Reespecificacion del modelo #
